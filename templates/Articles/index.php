@@ -1,4 +1,5 @@
 <h1>記事一覧</h1>
+<?= $this->Html->link('記事の追加', ['action' => 'add']) ?>
 <table>
     <tr>
         <th>タイトル</th>
@@ -17,6 +18,16 @@
         </td>
         <td>
             <?= $article->created->format(DATE_RFC850) ?>
+        </td>
+        <td>
+            <?= $this->Html->link('編集', ['action' => 'edit', $article->slug]) ?>
+
+            <!-- postLink() を使用すると、 JavaScript を使用して記事を削除する POST リクエストを行うリンクが作成されます。 -->
+            <?= $this->Form->postLink(
+                '削除',
+                ['action' => 'delete', $article->slug],
+                ['confirm' => 'よろしいですか?'])
+            ?>
         </td>
     </tr>
     <?php endforeach; ?>
