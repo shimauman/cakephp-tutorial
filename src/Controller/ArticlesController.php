@@ -1,8 +1,6 @@
 <?php
 namespace App\Controller;
 
-use Laminas\Diactoros\Response\RedirectResponse;
-
 class ArticlesController extends AppController
 {
     public function initialize(): void
@@ -43,12 +41,20 @@ class ArticlesController extends AppController
             }
             $this->Flash->error(__('Unable to add your article.'));
         }
+
+        $tags = $this->Articles->Tags->find('list')->all();
+        $this->set('tags', $tags);
+
         $this->set('article', $article);
     }
 
     public function edit($slug)
     {
-        $article = $this->Articles->findBySlug($slug)->firstOrFail();
+        $article = $this->Articles
+            ->findBySlug($slug)
+            ->contain('Tags') // NOTE: 関連するTagsを読み込む
+            ->firstOrFail();
+
         if ($this->request->is(['post', 'put'])) {
             $this->Articles->patchEntity($article, $this->request->getData());
             if ($this->Articles->save($article)) {
@@ -57,6 +63,9 @@ class ArticlesController extends AppController
             }
             $this->Flash->error(__('Unable to update your article.'));
         }
+
+        $tags = $this->Articles->Tags->find('list')->all();
+        $this->set('tags', $tags);
 
         $this->set('article', $article);
     }
@@ -71,5 +80,21 @@ class ArticlesController extends AppController
             $this->Flash->success(__('The {0} article has been deleted.', $article->title));
             return $this->redirect(['action' => 'index']);
         }
+    }
+
+    public function tags(...$tags)
+    {
+        // NOTE: 'pass' キーは CakePHP によって提供され、リクエストに渡された全ての URL パスセグメントを含みます。
+        // $tags = $this->request->getParam('pass');
+
+        $articles = $this->Articles->find('tagged', [
+            'tags' => $tags
+        ])
+        ->all();
+
+        $this->set([
+            'articles' => $articles,
+            'tags' => $tags
+        ]);
     }
 }

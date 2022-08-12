@@ -57,6 +57,12 @@ return static function (RouteBuilder $routes) {
          */
         $builder->connect('/pages/*', 'Pages::display');
 
+        // NOTE: http://localhost:8765/articles/tagged/funny/cat/gifs のような URL になります。 これにより、「funny」、「cat」、または「gifs」タグを持つすべての記事を見つけることができます。
+        //       末尾の `*` は、このアクションがパラメーターを渡されることをCakePHP に伝えます。
+        $builder->scope('/articles', function (RouteBuilder $builder) {
+            $builder->connect('/tagged/*', ['controller' => 'Articles', 'action' => 'tags']);
+        });
+
         /*
          * Connect catchall routes for all controllers.
          *
