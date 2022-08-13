@@ -21,7 +21,10 @@ class ArticlesController extends AppController
     public function view($slug = null)
     {
         // NOTE:  動的なファインダー である findBySlug() を使用することにより アクションを開始します。このメソッドは、与えられたスラグによって記事を検索する基本的なクエリーを 作成することができます。その時、最初のレコードを取得するか NotFoundException を投げるか のいずれかをする firstOrFail() を使います。
-        $article = $this->Articles->findBySlug($slug)->firstOrFail();
+        $article = $this->Articles
+            ->findBySlug($slug)
+            ->contain('Tags')
+            ->firstOrFail();
         $this->set(compact('article'));
     }
 
