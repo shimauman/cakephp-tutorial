@@ -331,10 +331,10 @@ return [
              */
             //'init' => ['SET GLOBAL innodb_stats_on_metadata = 0'],
 
-            // 'username' => '',
-            // 'password' => '',
+            'username' => env('DATABASE_USER'),
+            'password' => env('DATABASE_PASSWORD'),
             'host' => 'localhost',
-            'database' => 'cake_tutorial',
+            'database' => env('DATABASE_NAME'),
         ],
 
         /*
